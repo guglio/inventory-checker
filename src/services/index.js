@@ -19,5 +19,5 @@ const query = {
   outsideSearch: true
 }
 
-export const getInventory = () => axios.get(`/teslaApi/inventory/api/v1/inventory-results?query=${JSON.stringify(query)}`)
+export const getInventory = () => axios.get(`https://nessus-ui.herokuapp.com/inventory/`)
 // export const getInventory = () => axios.get(`/api/inventory`)
