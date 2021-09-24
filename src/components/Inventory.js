@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import CssBaseline from '@material-ui/core/CssBaseline'
+import Box from '@mui/material/Box';
 import MaUTable from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
+import Typography from '@mui/material/Typography';
 
 import { useTable } from 'react-table'
 import { getInventory } from '../services/'
@@ -33,28 +34,34 @@ function Table ({ columns, data }) {
         ))}
       </TableHead>
       <TableBody>
-        {rows.map((row, i) => {
-          prepareRow(row)
-          return (
-            <TableRow {...row.getRowProps()}>
-              {row.cells.map(cell => {
-                return (
-                  <TableCell {...cell.getCellProps()}>
-                    {cell.render('Cell')}
-                  </TableCell>
-                )
-              })}
-            </TableRow>
-          )
-        })}
+        {rows.length ? (
+          rows.map((row, i) => {
+            prepareRow(row)
+            return (
+              <TableRow {...row.getRowProps()}>
+                {row.cells.map(cell => {
+                  return (
+                    <TableCell {...cell.getCellProps()}>
+                      {cell.render('Cell')}
+                    </TableCell>
+                  )
+                })}
+              </TableRow>
+            )
+          })
+        ) : (
+          <TableCell colSpan={columns.length}>
+            <Typography variant="h5" component="div" align="center">No data :(</Typography>
+          </TableCell>
+        )}
       </TableBody>
     </MaUTable>
   )
 }
 
 const Inventory = () => {
-  const [data, setData] = useState([]);
-  const [update, setUpdate] = useState(undefined);
+  const [data, setData] = useState([])
+  const [update, setUpdate] = useState(undefined)
 
   useEffect(() => {
     const parseResults = data => {
@@ -83,17 +90,16 @@ const Inventory = () => {
 
       return returnData
     }
+    const fetchData = () => {
+      getInventory().then(res => {
+        const { data } = res
+        setData(parseResults(data.results))
+        setUpdate(`${new Date()}`)
+      })
+    }
+    const inventoryInteval = setInterval(() => fetchData(), 1000 * 5 * 60)
 
-    const inventoryInteval = setInterval(
-      () =>
-        getInventory().then(res => {
-          const { data } = res;
-          setData(parseResults(data.results))
-          setUpdate(`${new Date()}`)
-        }),
-      10000
-    )
-
+    fetchData()
     return () => {
       clearInterval(inventoryInteval)
     }
@@ -115,16 +121,16 @@ const Inventory = () => {
     },
     { accessor: 'Model', Header: 'Model', width: '20%' },
     { accessor: 'City', Header: 'City', width: '20%' },
-    { accessor: 'TrimName', Header: 'TrimName', width: '20%' },
-    { accessor: 'options', Header: 'options', width: '20%' }
+    { accessor: 'TrimName', Header: 'Trim', width: '20%' },
+    { accessor: 'options', Header: 'Options', width: '20%' }
   ]
 
   return (
-    <div>
-      <CssBaseline />
+    <Box>
+      
       <Table data={data} columns={columns} />
-  <div>Last update: {update}</div>
-    </div>
+      <Typography variant='body1'>Last update: {update}</Typography>
+    </Box>
   )
 }
 

@@ -1,9 +1,13 @@
-import { HashRouter as Router, Switch, Route, Link } from 'react-router-dom'
-
+import { HashRouter as Router, Switch, Route } from 'react-router-dom'
 import Inventory from './components/Inventory'
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
 
 function App () {
   return (
+    <>
+    <CssBaseline />
+    <Container >
     <Router>
       <Switch>
         <Route path='/' exact>
@@ -11,6 +15,8 @@ function App () {
         </Route>
       </Switch>
     </Router>
+    </Container>
+    </>
   )
 }
 
